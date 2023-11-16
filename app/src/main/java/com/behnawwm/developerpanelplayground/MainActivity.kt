@@ -13,11 +13,36 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.behnawwm.developerpanelplayground.ui.theme.DeveloperPanelPlaygroundTheme
+import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +51,31 @@ class MainActivity : ComponentActivity() {
         createNotification()
         setContent {
             DeveloperPanelPlaygroundTheme {
-                Text(text = "main activity")
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    var offsetX by remember { mutableStateOf(0f) }
+                    var offsetY by remember { mutableStateOf(0f) }
+
+                    Icon(
+                        imageVector = Icons.Filled.Settings,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(36.dp)
+                            .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+                            .pointerInput(Unit) {
+                                detectDragGestures { _, dragAmount ->
+                                    offsetX = (offsetX + dragAmount.x)
+                                    offsetY = (offsetY + dragAmount.y)
+                                }
+                            }
+                            .shadow(8.dp)
+                            .background(Color.White)
+                            .align(Alignment.TopCenter),
+                        tint = Color.Magenta,
+                    )
+                    Text(text = "main activity", modifier = Modifier.align(Alignment.Center))
+                }
             }
         }
     }
