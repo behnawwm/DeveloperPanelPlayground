@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">DeveloperPanelPlayground</string>
+    <string name="app_name">DevPan Playground</string>
+    <string name="title_activity_developer_panel">DevPan</string>
 </resources>
