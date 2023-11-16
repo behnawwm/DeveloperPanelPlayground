@@ -21,7 +21,7 @@ class DeveloperPanelActivity : ComponentActivity() {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.White),
+                        .background(Color.Black),
                 ) {
                     DeveloperPanelContent(modifier = Modifier.align(Alignment.Center))
                 }
