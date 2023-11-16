@@ -1,6 +1,7 @@
 package com.behnawwm.developerpanelplayground
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -8,7 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.NotificationCompat
@@ -18,10 +18,36 @@ import androidx.core.content.ContextCompat
 class DeveloperPanelNotificationBuilderImpl : DeveloperPanelNotificationBuilder {
 
     override fun createNotification(activity: ComponentActivity) {
-        checkOrRequestNotificationPermission(activity)
+        if (checkNotificationPermission(activity)) {
+            setupNotification(activity)
+        } else {
+            requestNotificationPermission(
+                activity = activity,
+                onPermissionGranted = {
+                    setupNotification(activity)
+                }
+            )
+        }
+    }
+
+    @SuppressLint("InlinedApi")
+    private fun requestNotificationPermission(
+        activity: ComponentActivity,
+        onPermissionGranted: () -> Unit
+    ) {
+        val requestPermissionLauncher =
+            activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+                if (isGranted)
+                    onPermissionGranted()
+            }
+        requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun setupNotification(activity: ComponentActivity) {
         createNotificationChannel(activity)
 
-        val builder = NotificationCompat.Builder(activity, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(activity, DEVELOPER_PANEL_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_developer_panel_foreground)
             .setContentTitle("DevPan")
             .setContentText("Click here to view the DevPan")
@@ -51,31 +77,29 @@ class DeveloperPanelNotificationBuilderImpl : DeveloperPanelNotificationBuilder 
         }
     }
 
-    private fun checkOrRequestNotificationPermission(activity: ComponentActivity) {
+    private fun checkNotificationPermission(activity: ComponentActivity): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(
-                    activity,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                return
-            }
-            val requestPermissionLauncher =
-                activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-                    Toast.makeText(activity, "isGranted: $isGranted", Toast.LENGTH_SHORT).show()
-                }
-            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            return ContextCompat.checkSelfPermission(
+                activity,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
         }
+        return true
     }
 
     private fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            if (notificationManager.getNotificationChannel(CHANNEL_ID) == null) {
+            if (notificationManager.getNotificationChannel(DEVELOPER_PANEL_CHANNEL_ID) == null) {
                 val importance = NotificationManager.IMPORTANCE_DEFAULT
-                val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance).apply {
-                    description = CHANNEL_DESCRIPTION
+                val channel = NotificationChannel(
+                    DEVELOPER_PANEL_CHANNEL_ID,
+                    DEVELOPER_PANEL_CHANNEL_NAME,
+                    importance
+                ).apply {
+                    description = DEVELOPER_PANEL_CHANNEL_DESCRIPTION
+                    setShowBadge(false)
                 }
                 notificationManager.createNotificationChannel(channel)
             }
@@ -83,8 +107,9 @@ class DeveloperPanelNotificationBuilderImpl : DeveloperPanelNotificationBuilder 
     }
 
     companion object {
-        const val CHANNEL_ID = "DEVELOPER_PANEL_CHANNEL_ID"
-        const val CHANNEL_NAME = "DEVELOPER_PANEL_CHANNEL_NAME"
-        const val CHANNEL_DESCRIPTION = "DEVELOPER_PANEL_CHANNEL_DESCRIPTION"
+        private const val DEVELOPER_PANEL_CHANNEL_ID = "DEVELOPER_PANEL_CHANNEL_ID"
+        private const val DEVELOPER_PANEL_CHANNEL_NAME = "Developer Panel Channel"
+        private const val DEVELOPER_PANEL_CHANNEL_DESCRIPTION =
+            "This Channel is for sending the DevPan Notification"
     }
 }
