@@ -22,9 +22,6 @@ android {
             useSupportLibrary = true
         }
     }
-    sourceSets {
-
-    }
 
     buildTypes {
         release {
