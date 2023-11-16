@@ -22,12 +22,18 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.behnawwm.developerpanelplayground.ui.theme.DeveloperPanelPlaygroundTheme
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var notificationBuilder: DeveloperPanelNotificationBuilder
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        createNotification()
+        notificationBuilder.createNotification(context = baseContext, activity = this)
         setContent {
             DeveloperPanelPlaygroundTheme {
                 Box(modifier = Modifier.fillMaxSize()) {
@@ -37,9 +43,9 @@ class MainActivity : ComponentActivity() {
                     )
                     DeveloperPanelFloatingButton(
                         onClick = {
-                            startActivity(
-                                createDeveloperPanelActivityIntent()
-                            )
+//                            startActivity(
+//                                createDeveloperPanelActivityIntent()
+//                            )
                         }
                     )
                 }
@@ -47,74 +53,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun createNotification() {
-        checkOrRequestNotificationPermission()
-        createNotificationChannel()
-
-        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_developer_panel_foreground)
-            .setContentTitle("DevPan")
-            .setContentText("Click here to view the DevPan")
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .setOngoing(false)
-            .setContentIntent(
-                createDeveloperPanelActivityPendingIntent()
-            )
-
-        with(NotificationManagerCompat.from(this)) {
-            val notificationId = 1
-            notify(notificationId, builder.build())
-        }
-    }
-
-    private fun createDeveloperPanelActivityPendingIntent(): PendingIntent =
-        PendingIntent.getActivity(
-            this,
-            0,
-            createDeveloperPanelActivityIntent(),
-            PendingIntent.FLAG_IMMUTABLE
-        )
-
-    private fun createDeveloperPanelActivityIntent(): Intent {
-        return Intent(this, DeveloperPanelActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-    }
-
-    private fun checkOrRequestNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(
-                    baseContext,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                return
-            }
-            val requestPermissionLauncher =
-                registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-                    Toast.makeText(baseContext, "isGranted: $isGranted", Toast.LENGTH_SHORT).show()
-                }
-            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }
-    }
-
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            if (notificationManager.getNotificationChannel(CHANNEL_ID) == null) {
-                val importance = NotificationManager.IMPORTANCE_DEFAULT
-                val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance).apply {
-                    description = CHANNEL_DESCRIPTION
-                }
-                notificationManager.createNotificationChannel(channel)
-            }
-        }
-    }
-
-    companion object {
-        const val CHANNEL_ID = "DEVELOPER_PANEL_CHANNEL_ID"
-        const val CHANNEL_NAME = "DEVELOPER_PANEL_CHANNEL_NAME"
-        const val CHANNEL_DESCRIPTION = "DEVELOPER_PANEL_CHANNEL_DESCRIPTION"
-    }
 }
