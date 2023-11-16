@@ -22,6 +22,9 @@ android {
             useSupportLibrary = true
         }
     }
+    sourceSets {
+
+    }
 
     buildTypes {
         release {
@@ -32,7 +35,7 @@ android {
             )
         }
         debug {
-            versionNameSuffix = "-demo"
+            versionNameSuffix = "-debug"
         }
     }
 

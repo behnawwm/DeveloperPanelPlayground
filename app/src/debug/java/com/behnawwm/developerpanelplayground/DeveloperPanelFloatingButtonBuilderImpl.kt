@@ -1,6 +1,5 @@
 package com.behnawwm.developerpanelplayground
 
-import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
