@@ -18,8 +18,8 @@
             android:exported="true"
             android:label="@string/title_activity_developer_panel"
             android:theme="@style/Theme.DeveloperPanelPlayground"
-            android:taskAffinity="com.behnawwm.developerpanelplayground.DeveloperPanelActivity"
-            >
+            android:icon="@drawable/ic_launcher_developer_panel_foreground"
+            android:taskAffinity="com.behnawwm.developerpanelplayground.DeveloperPanelActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
