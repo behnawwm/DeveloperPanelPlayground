@@ -9,6 +9,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import com.behnawwm.developerpanelplayground.ui.theme.DeveloperPanelPlaygroundTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -42,7 +46,12 @@ class MainActivity : ComponentActivity() {
         developerPanelDrawerBuilder.ContainerContent {
             Box(modifier = Modifier.fillMaxSize()) {
                 Text(
-                    text = "Main Activity",
+                    text = buildAnnotatedString {
+                        append("Main Activity of ")
+                        withStyle(style = SpanStyle(color = if (BuildConfig.DEBUG) Color.Red else Color.Green)) {
+                            append(BuildConfig.BUILD_TYPE)
+                        }
+                    },
                     modifier = Modifier.align(Alignment.Center)
                 )
                 developerPanelFloatingButtonBuilder.Content()
