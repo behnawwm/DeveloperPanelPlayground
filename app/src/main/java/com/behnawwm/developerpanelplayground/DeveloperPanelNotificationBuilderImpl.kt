@@ -17,21 +17,21 @@ import androidx.core.content.ContextCompat
 
 class DeveloperPanelNotificationBuilderImpl : DeveloperPanelNotificationBuilder {
 
-    override fun createNotification(context: Context, activity: ComponentActivity) {
+    override fun createNotification(activity: ComponentActivity) {
         checkOrRequestNotificationPermission(activity)
-        createNotificationChannel(context)
+        createNotificationChannel(activity)
 
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(activity, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_developer_panel_foreground)
             .setContentTitle("DevPan")
             .setContentText("Click here to view the DevPan")
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setOngoing(false)
             .setContentIntent(
-                createDeveloperPanelActivityPendingIntent(context)
+                createDeveloperPanelActivityPendingIntent(activity)
             )
 
-        with(NotificationManagerCompat.from(context)) {
+        with(NotificationManagerCompat.from(activity)) {
             val notificationId = 1
             notify(notificationId, builder.build())
         }

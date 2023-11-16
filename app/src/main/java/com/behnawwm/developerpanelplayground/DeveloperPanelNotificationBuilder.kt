@@ -4,5 +4,5 @@ import android.content.Context
 import androidx.activity.ComponentActivity
 
 interface DeveloperPanelNotificationBuilder {
-    fun createNotification(context: Context, activity: ComponentActivity)
+    fun createNotification(activity: ComponentActivity)
 }

@@ -29,11 +29,14 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var notificationBuilder: DeveloperPanelNotificationBuilder
+    lateinit var developerPanelNotificationBuilder: DeveloperPanelNotificationBuilder
+
+    @Inject
+    lateinit var developerPanelFloatingButtonBuilder: DeveloperPanelFloatingButtonBuilder
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        notificationBuilder.createNotification(context = baseContext, activity = this)
+        developerPanelNotificationBuilder.createNotification(activity = this@MainActivity)
         setContent {
             DeveloperPanelPlaygroundTheme {
                 Box(modifier = Modifier.fillMaxSize()) {
@@ -41,13 +44,7 @@ class MainActivity : ComponentActivity() {
                         text = "Main Activity",
                         modifier = Modifier.align(Alignment.Center)
                     )
-                    DeveloperPanelFloatingButton(
-                        onClick = {
-//                            startActivity(
-//                                createDeveloperPanelActivityIntent()
-//                            )
-                        }
-                    )
+                    developerPanelFloatingButtonBuilder.Content()
                 }
             }
         }

@@ -1,6 +1,5 @@
 package com.behnawwm.developerpanelplayground
 
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,7 +10,12 @@ import dagger.hilt.components.SingletonComponent
 object DeveloperPanelModule {
 
     @Provides
-    fun provideAnalyticsService(): DeveloperPanelNotificationBuilder {
+    fun provideNotificationBuilder(): DeveloperPanelNotificationBuilder {
         return DeveloperPanelNotificationBuilderImpl()
+    }
+
+    @Provides
+    fun provideFloatingButtonBuilder(): DeveloperPanelFloatingButtonBuilder {
+        return DeveloperPanelFloatingButtonBuilderImpl()
     }
 }
