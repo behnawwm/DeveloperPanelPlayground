@@ -2,8 +2,7 @@ package com.behnawwm.developerpanelplayground
 
 import androidx.compose.runtime.Composable
 
-interface DeveloperPanelFloatingButtonBuilder {
-
+interface DeveloperPanelDrawerBuilder {
     @Composable
-    fun Content()
+    fun ContainerContent(content: @Composable () -> Unit)
 }

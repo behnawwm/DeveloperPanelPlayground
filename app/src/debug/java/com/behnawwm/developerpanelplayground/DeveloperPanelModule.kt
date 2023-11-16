@@ -18,4 +18,9 @@ object DeveloperPanelModule {
     fun provideFloatingButtonBuilder(): DeveloperPanelFloatingButtonBuilder {
         return DeveloperPanelFloatingButtonBuilderImpl()
     }
+
+    @Provides
+    fun provideDrawerBuilder(): DeveloperPanelDrawerBuilder {
+        return DeveloperPanelDrawerBuilderImpl()
+    }
 }
