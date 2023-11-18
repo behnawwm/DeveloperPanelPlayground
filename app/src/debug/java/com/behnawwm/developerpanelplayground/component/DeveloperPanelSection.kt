@@ -36,7 +36,7 @@ fun DeveloperPanelSection(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    var isExpanded by remember { mutableStateOf(true) }
+    var isExpanded by remember { mutableStateOf(false) }
 
     val chevronRotation by animateFloatAsState(
         targetValue = if (isExpanded) 90f else 0f,
@@ -58,8 +58,8 @@ fun DeveloperPanelSection(
                 modifier = Modifier.rotate(chevronRotation)
             )
         }
-        Spacer(modifier = Modifier.size(8.dp))
         AnimatedVisibility(visible = isExpanded) {
+            Spacer(modifier = Modifier.size(8.dp))
             Column {
                 Divider(modifier = Modifier.fillMaxWidth())
                 content()

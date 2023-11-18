@@ -48,6 +48,7 @@ fun DeveloperPanelContent(modifier: Modifier = Modifier) {
                 onClick = {},
                 modifier = Modifier.fillMaxWidth()
             )
+            Spacer(modifier = Modifier.size(8.dp))
             DeveloperPanelNavigateItem(
                 title = "Crashes",
                 description = "View crashes here",
